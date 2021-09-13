@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e3bd1c6e5cc4d010268dd81c2a9c2f2",
+    "content-hash": "c16cca0af66cca2e38abe770bf2ad282",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3317,6 +3317,54 @@
                 }
             ],
             "time": "2021-08-11T01:06:55+00:00"
+        },
+        {
+            "name": "shweshi/laravel-unsplash-wrapper",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shweshi/Laravel-Unsplash-Wrapper.git",
+                "reference": "9023eb812ab00c2367c6e575b8fb0430c149be97"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shweshi/Laravel-Unsplash-Wrapper/zipball/9023eb812ab00c2367c6e575b8fb0430c149be97",
+                "reference": "9023eb812ab00c2367c6e575b8fb0430c149be97",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "shweshi\\LaravelUnsplashWrapper\\Providers\\UnsplashServiceProvider",
+                        "shweshi\\LaravelUnsplashWrapper\\Providers\\UnsplashUsersServiceProvider",
+                        "shweshi\\LaravelUnsplashWrapper\\Providers\\UnsplashPhotosServiceProvider",
+                        "shweshi\\LaravelUnsplashWrapper\\Providers\\UnsplashCollectionsServiceProvider",
+                        "shweshi\\LaravelUnsplashWrapper\\Providers\\UnsplashSearchServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "shweshi\\LaravelUnsplashWrapper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shashi Prakash Gautam",
+                    "email": "contactmespg@gmail.com"
+                }
+            ],
+            "description": "A Laravel wrapper for Unsplash",
+            "support": {
+                "issues": "https://github.com/shweshi/Laravel-Unsplash-Wrapper/issues",
+                "source": "https://github.com/shweshi/Laravel-Unsplash-Wrapper/tree/master"
+            },
+            "time": "2018-02-10T17:48:08+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
