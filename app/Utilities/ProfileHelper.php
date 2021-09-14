@@ -16,11 +16,23 @@ class ProfileHelper
         'username' => 'required',
         'first_name' => 'required',
         'last_name' => 'required',
-        'twitter_username' => 'required',
-        'portfolio_url' => 'required',
-        'bio' => 'required',
-        'location' => 'nullable', // default is missing in migration
-        'instagram_username' => 'required',
+        'twitter_username' => 'present',
+        'portfolio_url' => 'present',
+        'bio' => 'present',
+        'location' => 'present',
+        'instagram_username' => 'present',
+        'profile_image' => 'present',
+        'total_collections' => 'numeric',
+        'total_likes' => 'numeric',
+        'total_photos' => 'numeric',
+        'for_hire' => 'boolean',
+        'social.paypal_email' => 'present',
+        'followers_count' => 'numeric',
+        'following_count' => 'numeric',
+        'allow_messages' => 'boolean',
+        'numeric_id' => 'numeric',
+        'downloads' => 'numeric',
+        'updated_at' => 'date',
     ];
 
     public static function getUpdatedProfile($username)
@@ -34,7 +46,18 @@ class ProfileHelper
                 return null;
             }
             $user = $validator->validated();
-            $profile = Profile::updateOrCreate($user, $user);
+
+            // Fix paypal_email only listed in social array
+            $user['paypal_email'] = $user['social']['paypal_email'];
+            unset($user['social']);
+
+            // Fix profile_image url
+            $user['profile_image'] = strtok($user['profile_image']['large'], '?');
+
+            // Rename updated_at from unsplash API to updated_external
+            $user['updated_external'] = $user['updated_at'];
+
+            $profile = Profile::updateOrCreate([ 'id' => $user['id'] ], $user);
         }
         return $profile;
     }
