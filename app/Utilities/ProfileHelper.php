@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use UnsplashUsers;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class ProfileHelper
 {
@@ -37,9 +38,22 @@ class ProfileHelper
 
     public static function getUpdatedProfile($username)
     {
-        $profile = Profile::where('username', '=', $username)->first();
+        $profile = $username;
+        if (is_string($username))
+        {
+            $profile = Profile::where('username', '=', $username)->first();
+        }
+        else
+        {
+            $username = $profile->username;
+        }
         if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff) {
-            $user = UnsplashUsers::profile($username, []);
+            $user = null;
+            try {
+                $user = UnsplashUsers::profile($username, []);
+            } catch (Throwable $e) {
+                return null;
+            }
             $user = json_decode($user->getContents(), true);
             $validator = Validator::make($user, self::$rules);
             if ($validator->fails()) {
