@@ -54,7 +54,7 @@ class ProfileHelper
             } catch (Throwable $e) {
                 return null;
             }
-            $user = json_decode($user->getContents(), true);
+            $user = json_decode($user->getBody()->getContents(), true);
             $validator = Validator::make($user, self::$rules);
             if ($validator->fails()) {
                 return null;
