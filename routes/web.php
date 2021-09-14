@@ -22,4 +22,5 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [Controller::class, 'index'])->name('dashboard');
 
 Route::middleware(['auth:sanctum', 'verified'])->post('/uprofile/search', [ProfileController::class, 'search'])->name('uprofile.search');
+Route::middleware(['auth:sanctum', 'verified'])->get('/uprofile/statistic', [ProfileController::class, 'statistic'])->name('uprofile.statistic');
 Route::middleware(['auth:sanctum', 'verified'])->get('/uprofile/{profile}', [ProfileController::class, 'show'])->name('uprofile.show');

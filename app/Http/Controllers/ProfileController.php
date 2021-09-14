@@ -23,4 +23,12 @@ class ProfileController extends Controller
         }
         return redirect(route('uprofile.show', [ 'profile' => $profile ]));
     }
+
+    public function statistic()
+    {
+        $profiles_downloads = Profile::orderByDesc('downloads')->take(10)->get();
+        // missing from model tbc
+        // $profiles_views = Profile::orderByDesc('views')->take(10)->get();
+        return view('uprofile.statistic', compact('profiles_downloads'));
+    }
 }
