@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', [Controller::class, 'index'])->name('dashboard');
 
-Route::middleware(['auth:sanctum', 'verified'])->post('/show', [DashboardController::class, 'show'])->name('show');
+Route::middleware(['auth:sanctum', 'verified'])->post('/uprofile/search', [ProfileController::class, 'search'])->name('uprofile.search');
+Route::middleware(['auth:sanctum', 'verified'])->get('/uprofile/{profile}', [ProfileController::class, 'show'])->name('uprofile.show');
