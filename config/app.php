@@ -177,6 +177,12 @@ return [
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
 
+        App\Providers\UnsplashCollectionsServiceProvider::class,
+        App\Providers\UnsplashPhotosServiceProvider::class,
+        App\Providers\UnsplashSearchServiceProvider::class,
+        App\Providers\UnsplashServiceProvider::class,
+        App\Providers\UnsplashUsersServiceProvider::class,
+
     ],
 
     /*
@@ -230,10 +236,10 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'UnsplashSearch' => katalam\LaravelUnsplashWrapper\Facades\UnsplashSearchFacade::class,
-        'UnsplashUsers' => katalam\LaravelUnsplashWrapper\Facades\UnsplashUsersFacade::class,
-        'UnsplashPhotos' => katalam\LaravelUnsplashWrapper\Facades\UnsplashPhotosFacade::class,
-        'UnsplashCollections' => shweshi\LaravelUnsplashWrapper\Facades\UnsplashCollectionsFacade::class,
+        'UnsplashSearch' => App\Facades\UnsplashSearchFacade::class,
+        'UnsplashUsers' => App\Facades\UnsplashUsersFacade::class,
+        'UnsplashPhotos' => App\Facades\UnsplashPhotosFacade::class,
+        'UnsplashCollections' => App\Facades\UnsplashCollectionsFacade::class,
         'ProfileHelper' => App\Utilities\ProfileHelper::class,
 
     ],
