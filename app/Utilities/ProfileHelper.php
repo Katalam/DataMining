@@ -5,6 +5,7 @@ namespace App\Utilities;
 use Carbon\Carbon;
 use UnsplashUsers;
 use App\Models\Profile;
+use App\Utilities\UnsplashUsers as UtilitiesUnsplashUsers;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileHelper
@@ -46,10 +47,12 @@ class ProfileHelper
         {
             $username = $profile->username;
         }
-        if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff || true) {
+        if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff) {
             $user = null;
             $user = UnsplashUsers::profile($username, []);
+            $statistic = UnsplashUsers::statistics($username, []);
             $user = json_decode($user->getBody()->getContents(), true);
+            $statistic = json_decode($statistic->getBody()->getContents(), true);
             $validator = Validator::make($user, self::$rules);
             if ($validator->fails()) {
                 return null;
@@ -65,6 +68,9 @@ class ProfileHelper
 
             // Rename updated_at from unsplash API to updated_external
             $user['updated_external'] = $user['updated_at'];
+
+            // copy total views from statistic to user
+            $user['total_views'] = $statistic['views']['total'];
 
             $profile = Profile::updateOrCreate([ 'id' => $user['id'] ], $user);
         }

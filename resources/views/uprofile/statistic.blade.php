@@ -18,7 +18,11 @@
                             <h3 class="text-lg">
                                 Most views per user
                             </h3>
-                            abc
+                            @foreach($profiles_views as $p_v)
+                            <div>
+                                <a href="{{ route('uprofile.show', [ 'profile' => $p_v ]) }}">{{ $p_v->username }}</a>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>

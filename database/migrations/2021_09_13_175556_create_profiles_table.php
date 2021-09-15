@@ -27,6 +27,7 @@ class CreateProfilesTable extends Migration
             $table->integer('total_collections');
             $table->integer('total_likes');
             $table->integer('total_photos');
+            $table->integer('total_views');
             $table->boolean('for_hire');
             $table->string('paypal_email')->nullable();
             $table->integer('followers_count');
