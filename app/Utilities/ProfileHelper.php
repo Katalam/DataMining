@@ -5,7 +5,6 @@ namespace App\Utilities;
 use Carbon\Carbon;
 use UnsplashUsers;
 use App\Models\Profile;
-use App\Utilities\UnsplashUsers as UtilitiesUnsplashUsers;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileHelper
@@ -67,7 +66,7 @@ class ProfileHelper
             $user['profile_image'] = strtok($user['profile_image']['large'], '?');
 
             // Rename updated_at from unsplash API to updated_external
-            $user['updated_external'] = $user['updated_at'];
+            $user['updated_external'] = date('Y-m-d H:i:s.uZ', strtotime($user['updated_at']));
 
             // copy total views from statistic to user
             $user['total_views'] = $statistic['views']['total'];
