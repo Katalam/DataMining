@@ -1,66 +1,73 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# DataMining
 
 <p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<a href="https://github.com/Katalam/DataMining/actions/workflows/test.yml"><img src="https://github.com/Katalam/DataMining/actions/workflows/test.yml/badge.svg" alt="Test Status"></a>
+<a href="https://github.com/Katalam/DataMining/actions/workflows/styleci.yml"><img src="https://github.com/Katalam/DataMining/actions/workflows/styleci.yml/badge.svg" alt="Test Status"></a>
 </p>
 
-## About Laravel
+DataMining is a code challenge from SPACE SQUAD as part of the application process. The challenge was to create a laravel application as a data miner from the unsplash API. As soon as a registered user enters a username, a link to a photo (from unsplash) or a profile url, the data mining application should start to track the result from the API. As a second task, it was a requirement to have a dashboard with the top 10 of tracked images with the most downloads, likes and views. In addition, the top 10 tracked user with the most downloads and views respectively. The API request should be limited to a minimal. Each result should be saved in a database and the application should serve the saved results, if the saved result is not outdated.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Jetstream as a backend-framework was allowed, and frontend was not intended to be judged.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+In addition, there are a couple of bonus tasks:
+* 2-factor authentication
+* Caching (for example with redis)
+* User data tracking via cronjob/ queue
+* List of all features thumbnails with links from a user
+* Representation of followers and followings
+* Self track of users with cross connection inside the database (for example via followers of a tracked user)
+* Representation of the remaining API calls to not exceed the free contingent
+* (Special) Rotating of multiple API keys to push the API requests limit higher
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requirements
 
-## Learning Laravel
+* PHP >= 8.0
+* Unsplash developer account
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Install project dependencies backend
+```
+composer install
+```
 
-## Laravel Sponsors
+### Install project dependencies frontend
+```
+npm i
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Copy the env file
+```
+cp .env.example .env
+```
+Fill out the db credentials and the unsplash API key. (Get your key [here](https://unsplash.com/developers))
 
-### Premium Partners
+### Generate the app encryption key
+```
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+### Create an empty database
+The database needs to be named the same as the value of the key DB_DATABASE from the `.env` file, the standard is datamining, but you are free to change.
+```
+mysql
 
-## Contributing
+Welcome to the MySQL monitor.
+mysql> CREATE DATABASE datamining;
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Migrate the database
+```
+php artisan migrate
+```
 
-## Code of Conduct
+## Usage
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+After you successfull registered yourself as a new user, you can start passing usernames or links to the search bar. You will be redirected if the username or link is valid. Checkout the dashboard to see it updating after you added a new tracked user by simply search for him.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-The wrapper for the unsplash API is mostly from [Shweshi](https://github.com/shweshi/Laravel-Unsplash-Wrapper) under the [MIT license](https://opensource.org/licenses/MIT).
+## Credits
+The wrapper for the unsplash API is mostly from [Shweshi](https://github.com/shweshi/Laravel-Unsplash-Wrapper) under the [MIT license](https://opensource.org/licenses/MIT). I needed the get the full response to access the api request limit informations.
