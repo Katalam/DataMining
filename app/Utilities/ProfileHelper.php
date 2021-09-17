@@ -6,35 +6,10 @@ use Carbon\Carbon;
 use UnsplashUsers;
 use App\Models\Picture;
 use App\Models\Profile;
-use Illuminate\Support\Facades\Validator;
 
 class ProfileHelper
 {
     private static $updateDiff = 12; // hours
-
-    private static $rules = [
-        'id' => 'required',
-        'username' => 'required',
-        'first_name' => 'required',
-        'last_name' => 'required',
-        'twitter_username' => 'present',
-        'portfolio_url' => 'present',
-        'bio' => 'present',
-        'location' => 'present',
-        'instagram_username' => 'present',
-        'profile_image' => 'present',
-        'total_collections' => 'numeric',
-        'total_likes' => 'numeric',
-        'total_photos' => 'numeric',
-        'for_hire' => 'boolean',
-        'social.paypal_email' => 'present',
-        'followers_count' => 'numeric',
-        'following_count' => 'numeric',
-        'allow_messages' => 'boolean',
-        'numeric_id' => 'numeric',
-        'downloads' => 'numeric',
-        'updated_at' => 'date',
-    ];
 
     public static function getUpdatedProfile($username)
     {
@@ -72,30 +47,31 @@ class ProfileHelper
                 ]);
             }
 
-            // User statistic
             $statistic = UnsplashUsers::statistics($username, []);
 
-            // User
-            $validator = Validator::make($user, self::$rules);
-            if ($validator->fails()) {
-                return null;
-            }
-            $user = $validator->validated();
-
-            // Fix paypal_email only listed in social array
-            $user['paypal_email'] = $user['social']['paypal_email'];
-            unset($user['social']);
-
-            // Fix profile_image url
-            $user['profile_image'] = strtok($user['profile_image']['large'], '?');
-
-            // Rename updated_at from unsplash API to updated_external
-            $user['updated_external'] = date('Y-m-d H:i:s.uZ', strtotime($user['updated_at']));
-
-            // copy total views from statistic to user
-            $user['total_views'] = $statistic['views']['total'];
-
-            $profile = Profile::updateOrCreate([ 'id' => $user['id'] ], $user);
+            $profile = Profile::updateOrCreate([ 'id' => $user['id'] ], [
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'first_name' => $user['first_name'],
+                'last_name' => $user['last_name'],
+                'twitter_username' => $user['twitter_username'],
+                'portfolio_url' => $user['portfolio_url'],
+                'bio' => $user['bio'],
+                'location' => $user['location'],
+                'instagram_username' => $user['instagram_username'],
+                'profile_image' => strtok($user['profile_image']['large'], '?'),
+                'total_collections' => $user['total_collections'],
+                'total_likes' => $user['total_likes'],
+                'total_views' => $statistic['views']['total'],
+                'for_hire' => $user['for_hire'],
+                'paypal_email' => $user['social']['paypal_email'],
+                'followers_count' => $user['followers_count'],
+                'following_count' => $user['following_count'],
+                'allow_messages' => $user['allow_messages'],
+                'numeric_id' => $user['numeric_id'],
+                'downloads' => $user['downloads'],
+                'updated_external' => date('Y-m-d H:i:s.uZ', strtotime($user['updated_at'])),
+            ]);
         }
         return $profile;
     }

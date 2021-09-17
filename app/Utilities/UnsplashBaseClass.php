@@ -46,6 +46,12 @@ class UnsplashBaseClass
         }
         $headers = $response->getHeaders();
         $body = json_decode($response->getBody(), true);
+
+        if (array_key_exists('errors', $body))
+        {
+            return null;
+        }
+
         if (array_key_exists('X-Ratelimit-Limit', $headers) && array_key_exists('X-Ratelimit-Remaining', $headers))
         {
             Cache::put('limit', $headers['X-Ratelimit-Limit']);
