@@ -58,6 +58,11 @@
                     </div>
                 </div>
             </div>
+            @foreach($pictures as $picture)
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg mt-4">
+                <img src="{{ $picture->url . '&fm=jpg&fit=max&q=50' }}" alt="" class="rounded-md">
+            </div>
+            @endforeach
         </div>
     </div>
 </x-app-layout>

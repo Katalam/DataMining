@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class Picture extends Model
 {
     use HasFactory;
 
@@ -17,13 +17,8 @@ class Profile extends Model
 
     protected $guarded = [];
 
-    public function getNameAttribute()
+    public function profile()
     {
-        return "{$this->first_name} {$this->last_name}";
-    }
-
-    public function pictures()
-    {
-        return $this->hasMany(Picture::class);
+        return $this->belongsTo(Profile::class);
     }
 }

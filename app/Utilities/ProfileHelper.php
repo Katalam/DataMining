@@ -4,6 +4,7 @@ namespace App\Utilities;
 
 use Carbon\Carbon;
 use UnsplashUsers;
+use App\Models\Picture;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Validator;
 
@@ -47,8 +48,34 @@ class ProfileHelper
             $username = $profile->username;
         }
         if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff) {
-            $user = UnsplashUsers::profile($username, []);
+            $photos = UnsplashUsers::photos($username, [ 'stats' => true, 'per_page' => 5000 ]);
+            $user = null;
+            if ($photos === [] || $photos === null)
+            {
+                $user = UnsplashUsers::profile($username, []);
+            }
+            else
+            {
+                $user = $photos[0]['user'];
+            }
+
+            foreach ($photos as $photo) {
+                Picture::updateOrCreate([ 'id' => $photo['id'] ], [
+                    'id' => $photo['id'],
+                    'profile_id' => $user['id'],
+                    'description' => $photo['description'],
+                    'url' => $photo['urls']['raw'],
+                    'total_likes' => $photo['statistics']['likes']['total'],
+                    'total_downloads' => $photo['statistics']['downloads']['total'],
+                    'total_views' => $photo['statistics']['views']['total'],
+                    'created_external' => date('Y-m-d H:i:s.uZ', strtotime($photo['created_at'])),
+                ]);
+            }
+
+            // User statistic
             $statistic = UnsplashUsers::statistics($username, []);
+
+            // User
             $validator = Validator::make($user, self::$rules);
             if ($validator->fails()) {
                 return null;

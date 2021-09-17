@@ -11,7 +11,8 @@ class ProfileController extends Controller
     public function show(Profile $profile)
     {
         $profile = ProfileHelper::getUpdatedProfile($profile);
-        return view('uprofile.show', compact('profile'));
+        $pictures = $profile->pictures()->orderByDesc('created_external')->take(5)->get();
+        return view('uprofile.show', compact('profile', 'pictures'));
     }
 
     public function search(Request $request)
