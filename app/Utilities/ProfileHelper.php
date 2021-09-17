@@ -46,7 +46,7 @@ class ProfileHelper
         {
             $username = $profile->username;
         }
-        if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff || true) {
+        if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff) {
             $user = UnsplashUsers::profile($username, []);
             $statistic = UnsplashUsers::statistics($username, []);
             $validator = Validator::make($user, self::$rules);
