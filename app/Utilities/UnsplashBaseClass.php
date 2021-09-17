@@ -4,6 +4,7 @@ namespace App\Utilities;
 
 use Throwable;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
 
 class UnsplashBaseClass
 {
@@ -43,6 +44,14 @@ class UnsplashBaseClass
         } catch (Throwable $e) {
             return null;
         }
-        return $response;
+        $headers = $response->getHeaders();
+        $body = json_decode($response->getBody(), true);
+        if (array_key_exists('X-Ratelimit-Limit', $headers) && array_key_exists('X-Ratelimit-Remaining', $headers))
+        {
+            Cache::put('limit', $headers['X-Ratelimit-Limit']);
+            Cache::put('remaining', $headers['X-Ratelimit-Remaining']);
+        } 
+
+        return $body;
     }
 }

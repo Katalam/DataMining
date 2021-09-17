@@ -73,7 +73,10 @@
                 @endif
 
                 <!-- Settings Dropdown -->
-                <div class="ml-3 relative">
+                <div class="ml-3 relative flex items-center">
+                    <div class="px-3 py-2 font-medium text-gray-500 text-sm leading-4">
+                        API: {{ Cache::get('remaining')[0] . ' / ' . Cache::get('limit')[0] }}
+                    </div>
                     <x-jet-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
