@@ -46,12 +46,20 @@ class ProfileHelper
         {
             $username = $profile->username;
         }
+        $remaining = -1;
         if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff) {
             $user = null;
-            $user = UnsplashUsers::profile($username, []);
+            $user = UnsplashUsers::profile($username, [])[0];
             $statistic = UnsplashUsers::statistics($username, []);
-            $user = json_decode($user->getBody()->getContents(), true);
-            $statistic = json_decode($statistic->getBody()->getContents(), true);
+
+            // extract the remaining api calls
+            $remaining = $statistic[1];
+            if (count($remaining) > 0)
+            {
+                $remaining = $remaining['remaining'];
+            }
+
+            $statistic = $statistic[0];
             $validator = Validator::make($user, self::$rules);
             if ($validator->fails()) {
                 return null;
@@ -73,6 +81,6 @@ class ProfileHelper
 
             $profile = Profile::updateOrCreate([ 'id' => $user['id'] ], $user);
         }
-        return $profile;
+        return array($profile, $remaining);
     }
 }

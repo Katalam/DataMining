@@ -17,6 +17,8 @@ class ProfileController extends Controller
     public function search(Request $request)
     {
         $profile = ProfileHelper::getUpdatedProfile($request->username);
+        $remaining = $profile[1];
+        $profile = $profile[0];
         if ($profile === null)
         {
             return redirect(route('dashboard'))->with('status', 'Username not found');

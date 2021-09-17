@@ -43,6 +43,16 @@ class UnsplashBaseClass
         } catch (Throwable $e) {
             return null;
         }
-        return $response;
+        $headers = $response->getHeaders();
+        $body = json_decode($response->getBody(), true);
+        $requestlimit = array();
+        if (array_key_exists('X-Ratelimit-Limit', $headers) && array_key_exists('X-Ratelimit-Remaining', $headers))
+        {
+            $requestlimit = array(
+                'limit' => $headers['X-Ratelimit-Limit'],
+                'remaining' => $headers['X-Ratelimit-Remaining']
+            );
+        }
+        return array($body, $requestlimit);
     }
 }
