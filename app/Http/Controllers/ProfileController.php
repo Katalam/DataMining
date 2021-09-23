@@ -6,6 +6,7 @@ use App\Models\Picture;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use App\Utilities\ProfileHelper;
+use UnsplashPhotos;
 
 class ProfileController extends Controller
 {
@@ -18,12 +19,23 @@ class ProfileController extends Controller
 
     public function search(Request $request)
     {
-        $profile = ProfileHelper::getUpdatedProfile($request->username);
-        if ($profile === null)
-        {
-            return redirect(route('dashboard'))->with('status', 'Username not found or API limit reached');
+        $username = $request->username;
+        $output = null;
+        preg_match('/https?:\/\/unsplash.com\/@/', $username, $output);
+        if (count($output) > 0) {
+            $username = str_replace($output[0], '', $username);
         }
-        return redirect(route('uprofile.show', [ 'profile' => $profile ]));
+
+        $profile = ProfileHelper::getUpdatedProfile($username);
+        if ($profile === null) {
+
+            $photo = UnsplashPhotos::single($username, []);
+            if ($photo == null) {
+                return redirect(route('dashboard'))->with('status', 'Username or photo id not found or API limit reached');
+            }
+            $profile = ProfileHelper::getUpdatedProfile($photo['user']['username']);
+        }
+        return redirect(route('uprofile.show', ['profile' => $profile]));
     }
 
     public function statistic()

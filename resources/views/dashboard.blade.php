@@ -6,7 +6,7 @@
                     <div class="col-span-4 col-start-2 px-4 py-4">
                         <form action="{{ route('uprofile.search') }}" method="POST">
                             @csrf
-                            <x-jet-label for="username">Username</x-jet-label>
+                            <x-jet-label for="username">Username or profile or picture id</x-jet-label>
                             <x-jet-input name="username" type="text" class="w-full mt-1" />
                             <div class="flex items-center justify-center">
                                 <x-jet-button type="submit" class="mt-2 ">Submit</x-jet-button>
