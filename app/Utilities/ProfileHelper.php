@@ -10,46 +10,50 @@ use App\Models\Profile;
 class ProfileHelper
 {
     private static $updateDiff = 12; // hours
+    private static $maxPhotosPerPage = 30; // given from unsplash
 
     public static function getUpdatedProfile($username)
     {
         $profile = $username;
-        if (is_string($username))
-        {
+        if (is_string($username)) {
             $profile = Profile::where('username', '=', $username)->first();
-        }
-        else
-        {
+        } else {
             $username = $profile->username;
         }
         if ($profile === null || $profile->updated_at->diffInHours(Carbon::now()) > self::$updateDiff) {
-            $photos = UnsplashUsers::photos($username, [ 'stats' => true, 'per_page' => 5000 ]);
-            $user = null;
-            if ($photos === [] || $photos === null)
-            {
-                $user = UnsplashUsers::profile($username, []);
-            }
-            else
-            {
-                $user = $photos[0]['user'];
-            }
+            // popular == likes
+            $photos = UnsplashUsers::photos($username, ['stats' => true, 'per_page' => self::$maxPhotosPerPage, 'order_by' => 'popular']);
+            $user = UnsplashUsers::profile($username, []);
+            if ($user == null)
+                return null;
 
-            foreach ($photos as $photo) {
-                Picture::updateOrCreate([ 'id' => $photo['id'] ], [
-                    'id' => $photo['id'],
-                    'profile_id' => $user['id'],
-                    'description' => $photo['description'],
-                    'url' => $photo['urls']['raw'],
-                    'total_likes' => $photo['statistics']['likes']['total'],
-                    'total_downloads' => $photo['statistics']['downloads']['total'],
-                    'total_views' => $photo['statistics']['views']['total'],
-                    'created_external' => date('Y-m-d H:i:s.uZ', strtotime($photo['created_at'])),
-                ]);
+            if ($photos != null)
+                self::savePictures($photos, $user['id']);
+
+            if ($user['total_photos'] > self::$maxPhotosPerPage) {
+                // more than 3 request needed
+                // so we take only the first 30 photos for each category to minimise API calls
+                if ($user['total_photos'] > (self::$maxPhotosPerPage * 3)) {
+                    $photos = UnsplashUsers::photos($username, ['stats' => true, 'per_page' => 30, 'order_by' => 'downloads']);
+                    self::savePictures($photos, $user['id']);
+                    $photos = UnsplashUsers::photos($username, ['stats' => true, 'per_page' => 30, 'order_by' => 'views']);
+                    self::savePictures($photos, $user['id']);
+                } else { // less than 3 request needed
+                    $i = 2;
+                    $photos = UnsplashUsers::photos($username, ['stats' => true, 'per_page' => 30, 'page' => $i]);
+                    while ($photos != []) {
+                        self::savePictures($photos, $user['id']);
+                        $i++;
+                        $photos = UnsplashUsers::photos($username, ['stats' => true, 'per_page' => 30, 'page' => $i]);
+                    }
+                }
             }
 
             $statistic = UnsplashUsers::statistics($username, []);
+            if ($statistic == null)
+                return null;
 
-            $profile = Profile::updateOrCreate([ 'id' => $user['id'] ], [
+            $profile = Profile::updateOrCreate(['id' => $user['id']], [
                 'id' => $user['id'],
                 'username' => $user['username'],
                 'first_name' => $user['first_name'],
@@ -74,5 +78,21 @@ class ProfileHelper
             ]);
         }
         return $profile;
+    }
+
+    private static function savePictures($photos, $userId)
+    {
+        foreach ($photos as $photo) {
+            Picture::updateOrCreate(['id' => $photo['id']], [
+                'id' => $photo['id'],
+                'profile_id' => $userId,
+                'description' => $photo['description'],
+                'url' => $photo['urls']['raw'],
+                'total_likes' => $photo['statistics']['likes']['total'],
+                'total_downloads' => $photo['statistics']['downloads']['total'],
+                'total_views' => $photo['statistics']['views']['total'],
+                'created_external' => date('Y-m-d H:i:s.uZ', strtotime($photo['created_at'])),
+            ]);
+        }
     }
 }

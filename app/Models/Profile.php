@@ -19,6 +19,8 @@ class Profile extends Model
 
     public function getNameAttribute()
     {
+        if ($this->last_name == null)
+            return $this->first_name;
         return "{$this->first_name} {$this->last_name}";
     }
 
